@@ -969,7 +969,12 @@ hr {
     padding: 1rem;
 }
 
-
+@media(hover: hover) and (pointer: fine) {
+    .hover-outer-box:hover .hover-inner-box {
+    opacity: .9;
+    transition: opacity .5s;
+    } 
+}
 
 
 
