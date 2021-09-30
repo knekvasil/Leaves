@@ -83,7 +83,7 @@ async def root():
 					    <code>
 $ uvicorn main:app --reload</code>
 				    </pre>
-                    <img class="img-fluid" src="../../assets/images/articles/article-02/local-API.png" alt="image">
+                    <img class="img-fluid" src="../../assets/images/articles/article-02/local-api.png" alt="image">
                     
                     <p> Now that we have our baseline set up, lets beef up this API and get our data in here. We'll add our <span class="italic">.csv</span> to our directory then write our primary GET function below in <span class="italic">main.py</span>.</p>
                     <pre>
@@ -130,7 +130,7 @@ return facts_list</code>
                     <p>Loop <span class="italic">n = quantity</span> times, append the element at random index <span class="italic">i</span> to <span class="italic">element_list</span>, then return <span class="italic">element_list</span>. Thankfully the <span class="italic">.csv</span> has a simple structure: a list within a dictionary. Many public APIs will not be structured so generously and depending on the API, you may have to loop through lists within dictionaries within dictionaries within lists just to get the required data.</p>
                     <p>As an example of this, check out <span class="italic">https://randomuser.me/api/?results=3</span>.</p>
                     <p>Everthing should be working now! Make sure your API is running and check out <span class="italic">https://localhost:8000/api/3</span>. You should see 3 elements from the <span class="italic">.csv</span> returned on the screen.</p> 
-                    <img class="img-fluid" src="../../assets/images/articles/article-02/docker-API.png" alt="image">
+                    <img class="img-fluid" src="../../assets/images/articles/article-02/docker-api.png" alt="image">
                     
                     <p>Our basic project layout should look something like this:</p>
 				    <pre>
