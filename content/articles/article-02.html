@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kalju Jake Nekvasil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/site.webmanifest">
+    <link rel="manifest" href="../../assetsfavicon/site.webmanifest">
+    <link rel="stylesheet" href="../../styles/reset.min.css" />
+    <link rel="stylesheet" href="../../styles/style.css" />
+    <script src="https://kit.fontawesome.com/23d2dc067b.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body id="contact-body">
+    <!-- Header Start -->
+    <header class="site-header">
+      <div class="wrapper site-header__wrapper">
+        <a href="https://www.kajnekvasil.com/" class="brand">Leaves</a>
+        <nav class="nav">
+          <button class="nav__toggle" aria-expanded="false" type="button">
+            +
+          </button>
+          <ul class="nav__wrapper">
+            <li class="nav__item"><a href="../../index.html">Home</a></li>
+            <li class="nav__item"><a href="../about.html">About</a></li>
+            <li class="nav__item"><a href="../projects.html">Projects</a></li>
+            <li class="nav__item"><a href="../archive.html">Archive</a></li>
+            <li class="nav__item"><a href="../contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <script src="../../js/header.js"></script>
+    <!-- Header End -->
+
+    <!-- Main Start -->
+
+       <div class="main-wrapper">
+	    
+	    <article class="blog-post px-3 py-5 p-md-5">
+		    <div class="blog-container">
+			    <header class="blog-post-header">
+				    <h2 class="title mb-2">Let's create an API and host it.</h2>
+				    <div class="meta mb-3"><span class="date">Published September 30, 2021 | </span><span class="time">5 min read</span></div>
+			    </header>
+			    
+			    <div class="blog-post-body">
+				    <figure class="blog-banner">
+				        <img class="img-fluid" src="../../assets/images/articles/article-02/kj-humvees.jpeg" alt="image">
+				        <figcaption class="mt-2 text-center image-caption">Me randomly running into a programming language and two PaaS platforms in DC.</figcaption>
+				    </figure>
+				    
+                    <p>We've all dreamt as little kids about creating APIs. Back in the day during my friends 7th birthday party (total barn-burner by the way), he specifically requested his present to be a RESTful API. He instead got an RC car. CPS was called and the birthday came to an end right quick.</p>
+                    <p>But its 2021! We aren't children anymore. No longer do we have to rely on our parents gifting us an API on our birthdays. We now have the tools to make our own. </p>
+
+				    <h3 class="mt-5 mb-3">Writing an API</h3>
+                    <p><span class="italic">***Quick disclamer! The entire project structure is shown lower down in this post. Pathing should match 100%. If you're getting some error, chances are it's probably pathing.</span>
+                    <p>Because our backend is Python, we're going to build our API using FastAPI. FastAPI runs circles around Flask and Django when it comes to runtime <span class="bold">and</span> it has built in, interactive API documentation tools (super helpful). </p>
+                    <p>For the sake of simplicity we're going to create a limited API that just makes GET calls. This GET function will require and return <span class="italic">n</span> amount of elements from the <span class="italic">.csv</span> file. <span class="italic">n</span> will be passed in as a parameter by the user, then we'll tell pandas to do the legwork of actually grabbing the data.</p> 
+                    <p> Depending on whether or not you use a python version manager, you may need to do a little prep work setting up your environment before running these commands.</p>
+                    
+                    <pre>
+					    <code>
+$ pip install FastAPI[all]
+$ pip install pandas</code>
+				    </pre>
+                    <p>In our <span class="italic">main.py</span> we'll create our FastAPI skeleton.</p>
+				    <pre>
+					    <code>
+from fastapi import FastAPI
+import pandas as pd
+import random
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "My API!!!"}</code>
+				    </pre>
+                    <p>Run FastAPI and load up localhost to check your progress!</p>
+                    <pre>
+					    <code>
+$ uvicorn main:app --reload</code>
+				    </pre>
+                    <img class="img-fluid" src="../../assets/images/articles/article-02/local-API.png" alt="image">
+                    
+                    <p> Now that we have our baseline set up, lets beef up this API and get our data in here. We'll add our <span class="italic">.csv</span> to our directory then write our primary GET function below in <span class="italic">main.py</span>.</p>
+                    <pre>
+					    <code>
+@app.get("/api/{quantity}")
+async def generate(quantity: int):
+	rand_list = list(range(121))
+        random.shuffle(rand_list)
+        
+        element_list = list()
+        data = pd.read_csv("../data/my_data.csv")
+
+	for i in range(quantity):
+		element_list.append(data["Fact"][rand_list[i]])
+
+	return facts_list</code>
+				    </pre>
+                    <p>Let's breakdown this function.</p>
+                    <pre>
+					    <code>
+@app.get("/api/{quantity}")
+async def generate(quantity: int):</code>
+				    </pre>
+                    <p>We declare a path parameter in our decorator which allows us to declare and use that parameter in the corresponding function. Because our parameter represents the quantity of requested data elements, we restrict it to an int.</p>
+                    <pre>
+					    <code>
+rand_list = list(range(121))
+random.shuffle(rand_list)</code>
+				    </pre>
+                    <p>We run into an issue where we want to grab random elements within the data, but we do not want any <span class="bold">repeated</span> elements. A quick and dirty solution to this is to initialize a list of length <span class="italic">n</span> where the value at each index is equal to the index, or <span class="italic">list[i]=i</span>. Shuffle the list and you've got yourself a random, non-repeating sequence.</p>
+                    <pre>
+					    <code>
+element_list = list()
+data = pd.read_csv("../data/my_data.csv")</code>
+				    </pre>
+                    <p>Pretty self explanatory here. Declare the list that'll hold our elements and have pandas physically grab our data. Once again, make sure the path to your <span class="italic">.csv</span> file is correct. Also, make sure the <span class="italic">.csv</span> is properly formatted and actually readable!</p>
+                    <pre>
+					    <code>
+for i in range(quantity):
+	element_list.append(data["Fact"][rand_list[i]])
+
+return facts_list</code>
+				    </pre>
+                    <p>Loop <span class="italic">n = quantity</span> times, append the element at random index <span class="italic">i</span> to <span class="italic">element_list</span>, then return <span class="italic">element_list</span>. Thankfully the <span class="italic">.csv</span> has a simple structure: a list within a dictionary. Many public APIs will not be structured so generously and depending on the API, you may have to loop through lists within dictionaries within dictionaries within lists just to get the required data.</p>
+                    <p>As an example of this, check out <span class="italic">https://randomuser.me/api/?results=3</span>.</p>
+                    <p>Everthing should be working now! Make sure your API is running and check out <span class="italic">https://localhost:8000/api/3</span>. You should see 3 elements from the <span class="italic">.csv</span> returned on the screen.</p> 
+                    <img class="img-fluid" src="../../assets/images/articles/article-02/docker-API.png" alt="image">
+                    
+                    <p>Our basic project layout should look something like this:</p>
+				    <pre>
+					    <code>
+/home/user/Projects/my-fastapi-project
+├── app/
+│   └── main.py
+├── data/
+│   └── my_data.csv
+├── Dockerfile
+└── requirements.txt</code>
+				    </pre>
+                    <p>Curveball!! Look at your face right now. You must be freaking out about those two new files in there. <span class="italic">"What's a Dockerfile and what's the point of requirements.txt?"</span> you may ask. Now that your API is functioning properly, we can host it!</p>
+                    
+				    <blockquote class="blockquote m-lg-5 py-3 pl-4 px-lg-5">
+						<p class="mb-2"> "Where did that <span class="italic">Dockerfile</span> and <span class="italic">requirements.txt</span> come from??!</p>
+						<footer class="blockquote-footer">- You</footer>
+					</blockquote>
+                    
+                    <h3 class="mt-5 mb-3">Lets host our API! But first, Docker.</h3>
+
+				    <p>Docker allows you to package apps along with their environment conditions/dependencies into a single image which can then be run in a uniform container environment. It builds your image with a set of instructions found in a plain-text file called a Dockerfile. Docker then containerizes that image when it's run. This allows you to write and share applications without having to worry about other peoples' run environments. Docker always ensures it'll run identically to the original.</p>
+                    <p>I hope that wasn't too convoluted of an explanation. If you're still confused, my boy David does a killer job <a class="nav" href = "https://davidtruxall.com/a-docker-analogy/">explaining it</a>.</p>
+
+                    <p>Lets start Dockerizing our app. First let's create <span class="italic">requirements.txt</span> and add only a single line: <span class="italic">pandas</span>. A quick way of doing this is:
+    				<pre>
+					    <code>
+$ echo 'pandas' > requirements.txt</code>
+				    </pre>
+                    <p>Now lets create and write our Dockerfile. Remember, this is the set of instructions Docker will use to create an image out of our app. Our <span class="italic">Dockerfile</span> looks like this:</p> 
+                    <pre>
+					    <code>
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY ./app /app
+
+COPY ./data/my_data.csv /data/my_data.csv</code>
+				    </pre>
+                    <p>Let's line by line this.</p>
+                    <pre>
+					    <code>
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7</code>
+				    </pre>
+                    <p>Our wonderful developer project overlords over at FastAPI have already created a FastAPI Docker environment.</p>
+                    <pre>
+					    <code>
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt</code>
+				    </pre>
+                    <p>Just like how we used pip to install the FastAPI and pandas frameworks for this project, we have to tell Docker to do the same thing.</p>
+                    <pre>
+					    <code>
+COPY ./app /app
+
+COPY ./data/my_data.csv /data/my_data.csv</code>
+				    </pre>
+                    <p>We now need to tell Docker to copy specific files needed for it to successfully compile our app. The top line copies an entire folder, the bottom one copies only a specific file. In our case, both do the same thing.</p>
+                    
+                    <p>I'm assuming you have Docker already installed and ready to go. If not, <a class="nav" href = "https://www.docker.com/get-started">hurry up</a>! I'll be waiting.</p>
+                    <p>Navigate to the directory with your Dockerfile (should be <span class="italic">/home/user/Projects/my-fastapi-project</span>) and build the image.</p>
+                    <pre>
+					    <code>
+$ docker build -t my-fastapi-project-image -f Dockerfile .</code>
+				    </pre>
+                    <p>After the image builds successfully, run it!</p>
+                    <pre>
+					    <code>
+$ docker run -d --name my-fastapi-project -p 80:80 my-fastapi-project-image</code>
+				    </pre>
+                    <p> You have Dockerized an app! The container is now up and running on port 80. Check it out: <span class="italic">https://localhost:80</span>.</p>
+
+                    <h3 class="mt-5 mb-3">On to Heroku</h3> 
+                    <p>Now that we have a Dockerized container, we can use services like Heroku to host our webapp. Once you <a class="nav" href = "https://signup.heroku.com/login">create a Heroku account</a> we need to install Heroku locally though Homebrew.</p>
+                    <pre>
+					    <code>
+$ brew tap heroku/brew && brew install heroku</code>
+				    </pre>
+                    <p>Now that Heroku is locally installed, login, create a container, then push it! 
+                    <pre>
+					    <code>
+$ heroku container:login
+$ heroku create -a my-fastapi-project
+$ heroku container:push web -a my-fastapi-project</code>
+				    </pre>
+                    <p>Your API is now hosted on <span class="italic">my-fastapi-project.herokuapp.com</span>. Congrats.
+
+
+                    <p>All of the code for this project can be found on <a class="nav" href = "https://github.com/knekvasil/kj-facts">my Github</a>.</p>
+
+
+
+
+                </div>
+			</div>
+		</article>
+	</div>
+
+    <!-- Main End -->
+	
+	</body>
+
+	<footer><hr style="margin-top: 60px;border-top: 1px solid #eee;"><p class="copyright-article">Copyright © Kalju Jake Nekvasil 2021</p></footer>
+	
+
+    
+
+
+</html>

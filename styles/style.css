@@ -651,30 +651,33 @@ span.italic {
 
 
 pre{
-    margin-top:0;
-    margin-bottom:1rem;
-    overflow:auto
-
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow:auto;
 }
 
 code {
     font-family: 'JetBrains Mono', monospace;
-
+    font-weight: bold;
 }
 
 pre{
     display:block;
-    font-size:87.5%;
-    color:#292929
+    color:#292929;
+    background-color: #ebebeb;
+    padding-left: 25px;
+    border-radius: 20px;
 }
 pre code{
     font-size:inherit;
     color:inherit;
-    word-break:normal
+    word-break:normal;
+    
+
 }
 .pre-scrollable{
     max-height:340px;
-    overflow-y:scroll
+    overflow-y:scroll;
 }
 
 pre{
